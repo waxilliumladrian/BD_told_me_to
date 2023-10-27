@@ -40,6 +40,7 @@ jobs:
 
     - script: | # Scan Podman
         echo "docker.scanContainers=true" > wss-unified-agent.config
+        echo "docker.containerIncludes=*.alphain*." >> wss-unified-agent.config
         echo java -jar wss-unified-agent.jar -d $(Pipeline.Workspace) -c wss-unified-agent.config -apiKey $(APIKEY)
         java -jar wss-unified-agent.jar -d $(Pipeline.Workspace) -c wss-unified-agent.config
         echo =======================Image=======================
