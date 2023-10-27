@@ -26,9 +26,11 @@ jobs:
         # sudo apt-get -y install podman
         echo "=======================docker pull alpine======================="
         docker pull alpine
+        echo "=======================docker pull registry======================="
         docker pull registry
         echo "=======================docker run alpine======================="
         docker run alpine
+        echo "=======================docker run registry======================="
         docker run registry
       displayName: 'Set Up Docker and pull Image'
 
@@ -37,11 +39,10 @@ jobs:
         docker ps -a
         echo "=======================docker container ls======================="
         docker container ls
-      displayName: 'Podman Test Output'
+      displayName: 'Docker Test Output'
 
     - script: | # Scan Podman
         echo "docker.scanContainers=true" > wss-unified-agent.config
-        echo "docker.containerIncludes=.*alpine.*" >> wss-unified-agent.config
         cat wss-unified-agent.config
         echo java -jar wss-unified-agent.jar -d $(Pipeline.Workspace) -c wss-unified-agent.config -apiKey $(APIKEY)
         java -jar wss-unified-agent.jar -d $(Pipeline.Workspace) -c wss-unified-agent.config
