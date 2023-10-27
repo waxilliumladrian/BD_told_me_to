@@ -26,16 +26,17 @@ jobs:
         # sudo apt-get -y install podman
         echo "=======================docker pull alpine======================="
         docker pull alpine
-        # docker pull registry
+        docker pull registry
         echo "=======================docker run alpine======================="
         docker run alpine
+        docker run registry
       displayName: 'Set Up Docker and pull Image'
 
     - script: | # Docker Test Output
-        echo "=======================type docker======================="
-        type docker
         echo "=======================docker ps -a======================="
         docker ps -a
+        echo "=======================docker container ls======================="
+        docker container ls
       displayName: 'Podman Test Output'
 
     - script: | # Scan Podman
