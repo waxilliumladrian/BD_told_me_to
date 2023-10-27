@@ -1,0 +1,57 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  projectToken: ''
+  imageToken: ''
+  imageTokensString: ''
+  imageNamesString: ''
+
+jobs:
+  - job: WhiteSource
+    displayName: 'WhiteSource Scan'
+
+    steps:
+    - checkout: self 
+
+    - script: | # Download UA
+        echo Download Unified Agent
+        curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
+      displayName: 'Download UA'
+
+    - script: | # Docker Prestep
+        # sudo apt-get -y install podman
+        echo "=======================docker pull alpine======================="
+        docker pull alpine
+        # docker pull registry
+        echo "=======================docker run alpine======================="
+        docker run alpine
+      displayName: 'Set Up Docker and pull Image'
+
+    - script: | # Docker Test Output
+        echo "=======================type docker======================="
+        type docker
+        echo "=======================docker ps -a======================="
+        docker ps -a
+      displayName: 'Podman Test Output'
+
+    - script: | # Scan Podman
+        echo "docker.scanContainers=true" > wss-unified-agent.config
+        echo java -jar wss-unified-agent.jar -d $(Pipeline.Workspace) -c wss-unified-agent.config -apiKey $(APIKEY)
+        java -jar wss-unified-agent.jar -d $(Pipeline.Workspace) -c wss-unified-agent.config
+        echo =======================Image=======================
+        cd whitesource
+        cat scanProjectDetails.json
+        echo
+        cd ..
+        echo =======================Image=======================
+        
+      displayName: 'Scan Docker'
+      env:
+        WS_APIKEY: $(APIKEY)
+        WS_PRODUCTNAME: Ashe_AZDO_$(System.TeamProject)
+        WS_PROJECTNAME: $(Build.Repository.Name)_Container
+        WS_GENERATEPROJECTDETAILSJSON: true
